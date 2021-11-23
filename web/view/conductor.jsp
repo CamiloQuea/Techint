@@ -46,11 +46,18 @@
                 <thead>
                     <tr>
                         <th scope="col" onclick="sortTable(0)">ID</th>
-                        <th scope="col" onclick="sortTable(1)">NOMBRE</th>
-                        <th scope="col" onclick="sortTable(2)">APELLIDO</th>
-                        <th scope="col" onclick="sortTable(3)">EMAIL</th>
-                        <th scope="col" onclick="sortTable(4)">ROL ID</th>
-                        <th scope="col" onclick="sortTable(5)">ROL</th>
+                        <th scope="col" onclick="sortTable(3)">NOMBRE</th>
+                        <th scope="col" onclick="sortTable(4)">APELLIDO</th>
+                        <th scope="col" onclick="sortTable(1)">EMPRESA ID</th>
+                        <th scope="col" onclick="sortTable(1)">EMPRESA</th>
+                        <th scope="col" onclick="sortTable(1)">GRUPO SANGUINEO ID</th>
+                        <th scope="col" onclick="sortTable(1)">GRUPO SANGUINEO </th>
+                        <th scope="col" onclick="sortTable(1)">TIPO DOCUMENTO ID</th>
+                        <th scope="col" onclick="sortTable(1)">TIPO DOCUMENTO</th>
+                        <th scope="col" onclick="sortTable(1)">DOCUMENTO</th>
+                        <th scope="col" onclick="sortTable(2)">PAIS ID</th>
+                        <th scope="col" onclick="sortTable(2)">PAIS</th>
+                        <th scope="col" onclick="sortTable(5)">ACTIVO</th>
                         <th scope="col">FUNCIONES</th>
                     </tr>
                 </thead>
@@ -95,23 +102,38 @@
                     <div class="row g-3">
                         <div class="form-floating mb-3 col">
 
-                            <input type="email" class="form-control" placeholder="Ingresar correo" name="correo">
-                            <label for="floatingInput">Correo</label>
+                            <input type="text" class="form-control" placeholder="Ingresar documento" name="documento">
+                            <label for="floatingInput">Documento</label>
                         </div>
 
-                        <div class="form-floating mb-3 col">
-
-                            <input type="password" class="form-control" placeholder="Ingresar contraseña" name="contra">
-                            <label for="floatingInput">Contraseña</label>
-                        </div>
+                       
                     </div>
 
                     <div class="row g-3 mb-3">
 
-                        <select class="form-select" name="rol_id" id="select_rol">
+                        <select class="form-select" name="empresa_id" id="select_empresa">
 
                         </select>
 
+                        <select class="form-select" name="grupoSanguineo_id" id="select_grupoSanguineo">
+
+                        </select>
+
+                        <select class="form-select" name="tipoDocumento_id" id="select_tipoDocumento">
+
+                        </select>
+
+                        <select class="form-select" name="pais_id" id="select_pais">
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="checkBox_active">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Activo
+                        </label>
                     </div>
 
 

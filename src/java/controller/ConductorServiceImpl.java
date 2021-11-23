@@ -114,6 +114,7 @@ public class ConductorServiceImpl implements ConductorService {
             String conductor_apellido,
             Boolean activo
     ) {
+        int inserted = 0;
         try {
 
             Connection conn = connection.getConnection();
@@ -133,20 +134,26 @@ public class ConductorServiceImpl implements ConductorService {
             ps.setString(5, conductor_documento);
             ps.setString(6, conductor_nombre);
             ps.setString(7, conductor_apellido);
-            ps.setBoolean(8, activo);
 
-            int inserted = ps.executeUpdate();
+            if (activo) {
+                ps.setInt(8, 1);
+            } else {
+                ps.setInt(8, 0);
+            }
+
+            System.out.println(ps);
+
+            inserted = ps.executeUpdate();
 
             conn.close();
 
-            if (inserted > 0) {
-                return true;
-            } else {
-                return false;
-            }
-
-        } catch (Exception e) {
-            throw new Error(e);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        if (inserted > 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -200,7 +207,5 @@ public class ConductorServiceImpl implements ConductorService {
             throw new Error(e);
         }
     }
-
-    
 
 }

@@ -43,7 +43,7 @@ public class ApiConductor extends HttpServlet {
             obj.put("id", user.getId());
             obj.put("documento", user.getDocumento());
             obj.put("nombre", user.getNombre());
-            obj.put("apellido", user.getNombre());
+            obj.put("apellido", user.getApellido());
             obj.put("activo", user.getActivo());
             obj.put("empresa_id", user.getEmpresa_id());
             obj.put("empresa_name", user.getEmpresa_nombre());
@@ -62,73 +62,86 @@ public class ApiConductor extends HttpServlet {
 
     }
 
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        
+        
+        PrintWriter out = response.getWriter();
+        try {
+            JSONObject payload = http.getBody(request);
+
+            
+            
+            String nombre = (String) payload.get("nombre");
+            String apellido = (String) payload.get("apellido");
+            String documento = (String) payload.get("documento");
+            Boolean activo = (Boolean) payload.get("activo");
+            String empresa_id = (String) payload.get("empresa_id");
+            String grupoSanguineo_id = (String) payload.get("grupoSanguineo_id");
+            String tipoDocumentoIdentidad_id = (String) payload.get("tipoDocumentoIdentidad_id");
+            String pais_id = (String) payload.get("pais_id");
+
+            System.out.println("aaaaaa:  "+activo);
+                   
+
+            boolean rs = service.createConductor(
+            empresa_id,
+            grupoSanguineo_id,
+            tipoDocumentoIdentidad_id,
+            pais_id,
+            documento,
+            nombre,
+            apellido,
+            activo
+            );
+
+            JSONObject res = new JSONObject();
+
+            if (rs) {
+
+                res.put("error", false);
+                out.println(res);
+
+            } else {
+                res.put("error", true);
+                out.println(res);
+            }
+        } catch (ParseException ex) {
+            Logger.getLogger(ApiConductor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 //
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        
-//        
-//        PrintWriter out = response.getWriter();
-//        try {
-//            JSONObject payload = http.getBody(request);
-//
-//            
-//            
-//            String nombre = (String) payload.get("nombre");
-//            String apellido = (String) payload.get("apellido");
-//            String correo = (String) payload.get("correo");
-//            String contraseña = (String) payload.get("contra");
-//            String rol_id = (String) payload.get("rol_id");
-//
-//            contraseña = BCrypt.hashpw(contraseña, BCrypt.gensalt(12));
-//
-//            boolean rs = service.createUser(nombre, apellido, correo, contraseña, rol_id);
-//
-//            JSONObject res = new JSONObject();
-//
-//            if (rs) {
-//
-//                res.put("error", false);
-//                out.println(res);
-//
-//            } else {
-//                res.put("error", true);
-//                out.println(res);
-//            }
-//        } catch (ParseException ex) {
-//            Logger.getLogger(ApiConductor.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//    }
-//
-//    @Override
-//    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//
-//        PrintWriter out = response.getWriter();
-//
-//        String id = request.getParameter("id");
-//
-//        
-//
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//
-//        boolean res = service.deleteUser(id);
-//
-//        JSONObject msj = new JSONObject();
-//
-//        if (res) {
-//            msj.put("error", false);
-//            out.println(msj);
-//        } else {
-//            msj.put("error", true);
-//            out.println(msj);
-//        }
-//
-//    }
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        PrintWriter out = response.getWriter();
+
+        String id = request.getParameter("id");
+
+        
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        boolean res = service.deleteConductor(id);
+
+        JSONObject msj = new JSONObject();
+
+        if (res) {
+            msj.put("error", false);
+            out.println(msj);
+        } else {
+            msj.put("error", true);
+            out.println(msj);
+        }
+
+    }
 //
 //    @Override
 //    protected void doPut(HttpServletRequest request, HttpServletResponse response)
