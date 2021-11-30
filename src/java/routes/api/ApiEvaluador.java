@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Evaluador;
+import model.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import util.BCrypt;
@@ -31,7 +32,16 @@ public class ApiEvaluador extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         response.setContentType("application/json;charset=UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         ArrayList<Evaluador> evaluadorlist = service.getEvaluadores();
 
         ArrayList<JSONObject> resEvaluador = new ArrayList();
@@ -62,6 +72,16 @@ public class ApiEvaluador extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
+
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload = http.getBody(request);
 
@@ -88,6 +108,7 @@ public class ApiEvaluador extends HttpServlet {
 
     }
 //
+
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -96,11 +117,18 @@ public class ApiEvaluador extends HttpServlet {
 
         String id = request.getParameter("id");
 
-        
-
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         boolean res = service.deleteEvaluador(id);
 
         JSONObject msj = new JSONObject();
@@ -122,7 +150,16 @@ public class ApiEvaluador extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload = http.getBody(request);
 

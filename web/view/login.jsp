@@ -2,7 +2,7 @@
 <jsp:include page="components/head.jsp" >
     <jsp:param  name="nombre" value="Login"/>
 </jsp:include>
-<div class="d-flex justify-content-center align-items-center vh-100 login-page">
+<div class="d-flex justify-content-center align-items-center vh-100 vw-100 login-page">
 
     <div class="card card-outline card-primary login-box">
         <div class="card-header text-center">

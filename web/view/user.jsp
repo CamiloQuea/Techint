@@ -14,7 +14,7 @@
 
 
 
-<div class="mb-auto">
+<div class="d-block mb-auto">
 
     <div class="p-2 mb-auto">
         <div class="d-flex mb-3">
@@ -40,29 +40,30 @@
 
 
 
-
-        <div class="table-responsive" style="overflow: scroll">
-            <table class="table mx-auto container-fluid" id="datatable">
-                <thead>
-                    <tr>
-                        <th scope="col" onclick="sortTable(0)">ID</th>
-                        <th scope="col" onclick="sortTable(1)">NOMBRE</th>
-                        <th scope="col" onclick="sortTable(2)">APELLIDO</th>
-                        <th scope="col" onclick="sortTable(3)">EMAIL</th>
-                        <th scope="col" onclick="sortTable(4)">ROL ID</th>
-                        <th scope="col" onclick="sortTable(5)">ROL</th>
-                        <th scope="col">FUNCIONES</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaFilas">
-
-
+        <div class="d-block">
+            <div class="table-responsive">
+                <table class="table mx-auto container-fluid" id="datatable">
+                    <thead>
+                        <tr>
+                            <th scope="col" onclick="sortTable(0)">ID</th>
+                            <th scope="col" onclick="sortTable(1)">NOMBRE</th>
+                            <th scope="col" onclick="sortTable(2)">APELLIDO</th>
+                            <th scope="col" onclick="sortTable(3)">EMAIL</th>
+                            <th scope="col" onclick="sortTable(4)">ROL ID</th>
+                            <th scope="col" onclick="sortTable(5)">ROL</th>
+                            <th scope="col">FUNCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaFilas">
 
 
 
 
-                </tbody>
-            </table>
+
+
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>

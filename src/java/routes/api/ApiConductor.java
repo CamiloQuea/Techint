@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Conductor;
+import model.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import util.BCrypt;
@@ -28,9 +29,18 @@ public class ApiConductor extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        PrintWriter out = response.getWriter();
-
         response.setContentType("application/json;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
+
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
 
         ArrayList<Conductor> conductorlist = service.getConductores();
 
@@ -68,14 +78,21 @@ public class ApiConductor extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
-        
+
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
+
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload = http.getBody(request);
 
-            
-            
             String nombre = (String) payload.get("nombre");
             String apellido = (String) payload.get("apellido");
             String documento = (String) payload.get("documento");
@@ -85,18 +102,17 @@ public class ApiConductor extends HttpServlet {
             String tipoDocumentoIdentidad_id = (String) payload.get("tipoDocumentoIdentidad_id");
             String pais_id = (String) payload.get("pais_id");
 
-            System.out.println("aaaaaa:  "+activo);
-                   
+            System.out.println("aaaaaa:  " + activo);
 
             boolean rs = service.createConductor(
-            empresa_id,
-            grupoSanguineo_id,
-            tipoDocumentoIdentidad_id,
-            pais_id,
-            documento,
-            nombre,
-            apellido,
-            activo
+                    empresa_id,
+                    grupoSanguineo_id,
+                    tipoDocumentoIdentidad_id,
+                    pais_id,
+                    documento,
+                    nombre,
+                    apellido,
+                    activo
             );
 
             JSONObject res = new JSONObject();
@@ -116,6 +132,7 @@ public class ApiConductor extends HttpServlet {
 
     }
 //
+
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -124,11 +141,18 @@ public class ApiConductor extends HttpServlet {
 
         String id = request.getParameter("id");
 
-        
-
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         boolean res = service.deleteConductor(id);
 
         JSONObject msj = new JSONObject();
@@ -143,43 +167,60 @@ public class ApiConductor extends HttpServlet {
 
     }
 //
-//    @Override
-//    protected void doPut(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        PrintWriter out = response.getWriter();
-//
-//        try {
-//            JSONObject payload = http.getBody(request);
-//            
-//            String user_id = (String) payload.get("id");
-//            String nombre = (String) payload.get("nombre");
-//            String apellido = (String) payload.get("apellido");
-//            String correo = (String) payload.get("correo");
-//            String contraseña = (String) payload.get("contra");
-//            String rol_id = (String) payload.get("rol_id");
-//
-//            
-//            
-//            if (!contraseña.isEmpty()) {
-//                contraseña = BCrypt.hashpw(contraseña, BCrypt.gensalt(12));
-//            }
-//
-//            boolean res = service.updateUser(user_id, nombre, apellido, correo, contraseña, rol_id);
-//
-//            JSONObject msj = new JSONObject();
-//
-//            if (res) {
-//                msj.put("error", false);
-//                out.println(msj);
-//            } else {
-//                msj.put("error", true);
-//                out.println(msj);
-//            }
-//
-//        } catch (ParseException ex) {
-//            Logger.getLogger(ApiConductor.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
+
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
+        try {
+            JSONObject payload = http.getBody(request);
+
+            String id = (String) payload.get("id");
+            String nombre = (String) payload.get("nombre");
+            String apellido = (String) payload.get("apellido");
+            String documento = (String) payload.get("documento");
+            Boolean activo = (Boolean) payload.get("activo");
+            String empresa_id = (String) payload.get("empresa_id");
+            String grupoSanguineo_id = (String) payload.get("grupoSanguineo_id");
+            String tipoDocumentoIdentidad_id = (String) payload.get("tipoDocumentoIdentidad_id");
+            String pais_id = (String) payload.get("pais_id");
+
+            boolean res = service.updateConductor(
+                    id,
+                    empresa_id,
+                    grupoSanguineo_id,
+                    tipoDocumentoIdentidad_id,
+                    pais_id,
+                    documento,
+                    nombre,
+                    apellido,
+                    activo
+            );
+
+            JSONObject msj = new JSONObject();
+
+            if (res) {
+                msj.put("error", false);
+                out.println(msj);
+            } else {
+                msj.put("error", true);
+                out.println(msj);
+            }
+
+        } catch (ParseException ex) {
+            Logger.getLogger(ApiConductor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

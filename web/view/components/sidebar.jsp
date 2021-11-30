@@ -7,6 +7,7 @@
 
     usuario = (User) sesionok.getAttribute("usuario");
 
+    String rol = usuario.getRol_name();
 
 %>
 
@@ -37,6 +38,7 @@
 
         <nav  style="overflow-y: auto" class="h-100">
             <ul class="list-unstyled ps-0 my-3">
+                <% if (rol.compareToIgnoreCase("super administrador") == 0) {%>
                 <li class="mb-2">
                     <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#usuario" aria-expanded="false">
                         <i class="fas fa-address-book fs-2 me-3 fa-fw"></i>
@@ -49,19 +51,26 @@
                         </ul>
                     </div>
                 </li>
+                <% }%>
+
                 <li class="mb-2">
                     <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#conductor" aria-expanded="false">
-                        
+
                         <i class="fas fa-male fs-2 me-3 fa-fw"></i>
                         <span class="text-start fs-6">Conductor</span>
                     </button>
                     <div class="collapse" id="conductor">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                             <li><a href="/conductor" class="link-dark rounded">Conductor</a></li>
-                            
+                            <li><a href="/conductor/vehiculo" class="link-dark rounded">Vehiculos</a></li>
+                            <li><a href="/conductor/proyecto" class="link-dark rounded">Proyectos</a></li>
+                            <li><a href="/conductor/evaluacion" class="link-dark rounded">Evaluaciones</a></li>
+
                         </ul>
                     </div>
                 </li>
+
+                <% if (rol.compareToIgnoreCase("super administrador") == 0) {%>
                 <li class="mb-2">
                     <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#vehiculo" aria-expanded="false">
                         <i class="fas fa-truck-moving fs-2 me-3 fa-fw"></i>
@@ -74,6 +83,9 @@
                         </ul>
                     </div>
                 </li>
+                <% }%>
+
+                <% if (rol.compareToIgnoreCase("super administrador") == 0) {%>
                 <li class="mb-2 me-auto">
                     <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#infraccion" aria-expanded="false">
                         <i class="fas fa-exclamation-triangle fs-2 me-3 fa-fw"></i>
@@ -87,6 +99,8 @@
                         </ul>
                     </div>
                 </li>
+                <% }%>
+
 
                 <li class="mb-2">
                     <button class="btn btn-toggle align-items-center rounded collapsed mt-auto" data-bs-toggle="collapse" data-bs-target="#proyecto" aria-expanded="false">
@@ -100,7 +114,7 @@
                         </ul>
                     </div>
                 </li>
-
+                <% if (rol.compareToIgnoreCase("super administrador") == 0) {%>
                 <li class="mb-2">
                     <button class="btn btn-toggle align-items-center rounded collapsed mt-auto" data-bs-toggle="collapse" data-bs-target="#informacion-general" aria-expanded="false">
 
@@ -116,6 +130,8 @@
                         </ul>
                     </div>
                 </li>
+                <% }%>
+
 
                 <li class="mb-2">
                     <button class="btn btn-toggle align-items-center rounded collapsed mt-auto" data-bs-toggle="collapse" data-bs-target="#evaluacion" aria-expanded="false">
@@ -133,7 +149,7 @@
                         </ul>
                     </div>
                 </li>
-
+                <% if (rol.compareToIgnoreCase("super administrador") == 0) {%>
                 <li class="mb-2">
                     <button class="btn btn-toggle align-items-center rounded collapsed mt-auto" data-bs-toggle="collapse" data-bs-target="#licencia" aria-expanded="false">
 
@@ -149,7 +165,7 @@
                         </ul>
                     </div>
                 </li>
-
+                <% }%>
             </ul>
         </nav>
     </div>

@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.TipoLicenciaOficial;
+import model.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import util.http;
@@ -38,7 +39,16 @@ public class ApiTipoLicenciaOficial extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         ArrayList<TipoLicenciaOficial> tlicenciaInternalist = service.getTiposLicenciaOficial();
 
         ArrayList<JSONObject> resTDocumentoId = new ArrayList();
@@ -68,6 +78,16 @@ public class ApiTipoLicenciaOficial extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
+
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload;
 
@@ -109,7 +129,16 @@ public class ApiTipoLicenciaOficial extends HttpServlet {
         response.setContentType("application/json");
 
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         boolean res = service.deleteTipoLicenciaOficial(id);
 
         JSONObject msj = new JSONObject();
@@ -132,7 +161,16 @@ public class ApiTipoLicenciaOficial extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload = http.getBody(request);
 

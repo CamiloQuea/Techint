@@ -5,7 +5,6 @@
  */
 package routes.api;
 
-
 import controller.TipoLicenciaInternaServiceImpl;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.TipoLicenciaInterna;
+import model.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import util.http;
@@ -38,7 +38,16 @@ public class ApiTipoLicenciaInterna extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         ArrayList<TipoLicenciaInterna> tlicenciaInternalist = service.getTiposLicenciaInterna();
 
         ArrayList<JSONObject> resTDocumentoId = new ArrayList();
@@ -65,6 +74,16 @@ public class ApiTipoLicenciaInterna extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
+
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload;
 
@@ -93,6 +112,7 @@ public class ApiTipoLicenciaInterna extends HttpServlet {
 ////    
 ////    
 //
+
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -104,7 +124,16 @@ public class ApiTipoLicenciaInterna extends HttpServlet {
         response.setContentType("application/json");
 
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         boolean res = service.deleteTipoLicenciaInterna(id);
 
         JSONObject msj = new JSONObject();
@@ -120,13 +149,23 @@ public class ApiTipoLicenciaInterna extends HttpServlet {
     }
 ////    
 //
+
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload = http.getBody(request);
 

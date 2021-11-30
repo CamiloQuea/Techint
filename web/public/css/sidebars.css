@@ -1,6 +1,12 @@
-body {
+/*body {
     min-height: 100vh;
     min-height: -webkit-fill-available;
+}*/
+
+body {  
+  width:100vw;
+  height:100vh;
+  margin: 0px;
 }
 
 html {
@@ -120,8 +126,9 @@ main {
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
-
-@media (max-width: 1000px) {
+/*
+*/
+@media (max-width: 768px) {
 
     #sidebar{
 

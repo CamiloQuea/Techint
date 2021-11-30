@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Rol;
+import model.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import util.http;
@@ -38,7 +39,16 @@ public class ApiRol extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         ArrayList<Rol> rollist = service.getRols();
 
         ArrayList<JSONObject> resRol = new ArrayList();
@@ -65,6 +75,16 @@ public class ApiRol extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
+
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload;
 
@@ -90,8 +110,7 @@ public class ApiRol extends HttpServlet {
         }
 
     }
-    
-    
+
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -101,9 +120,18 @@ public class ApiRol extends HttpServlet {
         String id = request.getParameter("id");
 
         response.setContentType("application/json");
-        
-        response.setCharacterEncoding("UTF-8");
 
+        response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
+
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         boolean res = service.deleteRol(id);
 
         JSONObject msj = new JSONObject();
@@ -117,17 +145,26 @@ public class ApiRol extends HttpServlet {
         }
 
     }
-    
+
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload = http.getBody(request);
-            
+
             String rol_id = (String) payload.get("id");
             String rol_nombre = (String) payload.get("nombre");
 
@@ -147,6 +184,5 @@ public class ApiRol extends HttpServlet {
             Logger.getLogger(ApiUser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
 
 }

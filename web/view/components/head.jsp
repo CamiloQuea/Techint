@@ -19,4 +19,4 @@
     </head>
 
     <body >
-        <div class="d-flex vh-100 ">
+        <div class="d-flex align-items-stretch">

@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Empresa;
+import model.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import util.http;
@@ -39,7 +40,16 @@ public class ApiEmpresa extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         ArrayList<Empresa> empresalist = service.getEmpresas();
 
         ArrayList<JSONObject> resRol = new ArrayList();
@@ -67,6 +77,16 @@ public class ApiEmpresa extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
+
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload;
 
@@ -107,7 +127,16 @@ public class ApiEmpresa extends HttpServlet {
         response.setContentType("application/json");
 
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         boolean res = service.deleteEmpresa(id);
 
         JSONObject msj = new JSONObject();
@@ -136,7 +165,16 @@ public class ApiEmpresa extends HttpServlet {
             String id = (String) payload.get("id");
             String nombre = (String) payload.get("nombre");
             String ruc = (String) payload.get("ruc");
+            User userLogin = (User) request.getSession().getAttribute("usuario");
+            if (userLogin == null) {
 
+                JSONObject res = new JSONObject();
+
+                res.put("error", true);
+                response.setStatus(401);
+                out.println(res);
+                return;
+            }
             boolean res = service.updateEmpresaById(id, ruc, nombre);
 
             JSONObject msj = new JSONObject();

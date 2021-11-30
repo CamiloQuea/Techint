@@ -6,6 +6,7 @@ const selectModal = modalTabForm.getElementsByTagName('select');
 
 const modaltitle = document.getElementById('modaltitle');
 
+
 const modalTab = new bootstrap.Modal(document.getElementById('modalTab'), {
     keyboard: false
 });
@@ -13,7 +14,6 @@ const modalTab = new bootstrap.Modal(document.getElementById('modalTab'), {
 window.onload = async () => {
 
     await updateTable();
-    await updateRolSelect();
 
 };
 
@@ -27,31 +27,19 @@ const editBtn = async(btn) => {
 
     modalTabForm.reset();
 
-    modaltitle.innerHTML = 'MODIFICAR USUARIO';
+    modaltitle.innerHTML = 'EDITAR ROL';
 
     fila = btn.parentNode.parentNode.parentNode;
 
     const elemento = fila.children;
 
-    const user_id = elemento[0].innerHTML;
+    const rol_id = elemento[0].innerHTML;
 
     const nombre = elemento[1].innerHTML;
 
-    const apellido = elemento[2].innerHTML;
-
-    const correo = elemento[3].innerHTML;
-
-    const rol_id = elemento[4].innerHTML;
-
-    inputsModal['user_id'].value = user_id;
+    inputsModal['id'].value = rol_id;
 
     inputsModal['nombre'].value = nombre;
-
-    inputsModal['apellido'].value = apellido;
-
-    inputsModal['correo'].value = correo;
-
-    selectModal['rol_id'].value = rol_id;
 
     inputsModal['tipo'].value = 'actualizar';
 
@@ -59,16 +47,15 @@ const editBtn = async(btn) => {
 
 };
 
-
-
-
 on(document, 'click', '#addBtn', e => {
 
-    modaltitle.innerHTML = 'AGREGAR USUARIO';
-
     modalTabForm.reset();
-    modalTab.toggle();
+
+    modaltitle.innerHTML = 'AGREGAR ROL';
+
     inputsModal['tipo'].value = 'crear';
+
+    modalTab.toggle();
 
 });
 
@@ -81,22 +68,19 @@ on(document, 'submit', '#modalTabForm', async e => {
 
 
     if (tipo === 'crear') {
-
         const data = {
 
-            nombre: inputsModal['nombre'].value,
-            apellido: inputsModal['apellido'].value,
-            contra: inputsModal['contra'].value,
-            correo: inputsModal['correo'].value,
-            rol_id: selectModal['rol_id'].value
+            rol_nombre: inputsModal['nombre'].value
 
         };
 
-        if (verifyUpdate()) {
+        if (verifyCreate()) {
 
             return;
 
         }
+
+
 
         await createItem(data);
 
@@ -110,12 +94,8 @@ on(document, 'submit', '#modalTabForm', async e => {
 
         const data = {
 
-            id: inputsModal['user_id'].value,
-            nombre: inputsModal['nombre'].value,
-            apellido: inputsModal['apellido'].value,
-            contra: inputsModal['contra'].value,
-            correo: inputsModal['correo'].value,
-            rol_id: selectModal['rol_id'].value
+            id: inputsModal['id'].value,
+            nombre: inputsModal['nombre'].value
 
         };
 
@@ -143,11 +123,12 @@ async function deleteBtn(btn) {
 
     const elemento = fila.children;
 
-    const user_id = elemento[0].innerHTML;
+    const rol_id = elemento[0].innerHTML;
+
 
     if (confirm('ESTA SEGURO DE ELIMINAR?')) {
 
-        await deleteItem(user_id);
+        await deleteItem(rol_id);
 
     }
 
@@ -156,23 +137,9 @@ async function deleteBtn(btn) {
 }
 ;
 
-//on(document, 'click', '.btn-eliminar', async e => {
-//
-//    const fila = e.target.parentNode.parentNode;
-//
-//    const elemento = fila.children;
-//
-//    const user_id = elemento[0].innerHTML;
-//
-//    await deleteItem(user_id);
-//
-//    await updateTable();
-//
-//});
-
 const createItem = async (body) => {
 
-    const data = await fetch('/api/user', {
+    const data = await fetch('/api/rol', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -187,7 +154,7 @@ const createItem = async (body) => {
 
 const updateItem = async (body) => {
 
-    const data = await fetch('/api/user', {
+    const data = await fetch('/api/rol', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -204,7 +171,7 @@ const updateItem = async (body) => {
 
 const deleteItem = async (id) => {
 
-    const data = await fetch(`/api/user?id=${id}`, {
+    const data = await fetch(`/api/rol?id=${id}`, {
         method: 'DELETE'
     });
 
@@ -215,14 +182,11 @@ const deleteItem = async (id) => {
 
 const updateTable = async () => {
 
-    const data = await fetch(`/api/user`, {
-        method: 'GET',
-        credentials: 'include'
+    const data = await fetch(`/api/rol`, {
+        method: 'GET'
     });
 
     const datajson = await data.json();
-
-    console.log('YOOO', datajson)
 
     const tablaFilas = document.querySelector('#tablaFilas');
 
@@ -241,10 +205,6 @@ const updateTable = async () => {
         contentUpdated += `<tr class="align-middle">
                                 <td>${datajson[i].id}</td>
                                 <td>${datajson[i].nombre}</td>
-                                <td>${datajson[i].apellido}</td>
-                                <td>${datajson[i].correo}</td>
-                                <td>${datajson[i].rol_id}</td>
-                                <td>${datajson[i].rol}</td>
                                 <td>
         <div class="d-flex justify-content-evenly">
         
@@ -268,11 +228,8 @@ const updateTable = async () => {
 const verifyCreate = () => {
 
     if (
-//            selectModal['rol_id'].value !== "" &&
-            inputsModal['nombre'].value !== "" &&
-            inputsModal['apellido'].value !== "" &&
-            inputsModal['contra'].value !== "" &&
-            inputsModal['correo'].value !== ""
+            inputsModal['nombre'].value !== ""
+
             ) {
 
         return false;
@@ -288,11 +245,9 @@ const verifyCreate = () => {
 const verifyUpdate = () => {
 
     if (
-            selectModal['rol_id'].value !== "" &&
             inputsModal['nombre'].value !== "" &&
-            inputsModal['apellido'].value !== "" &&
-//            inputsModal['contra'].value !== "" &&
-            inputsModal['correo'].value !== ""
+            inputsModal['id'].value !== ""
+
             ) {
 
         return false;
@@ -304,41 +259,3 @@ const verifyUpdate = () => {
     }
 
 };
-
-
-//ROL
-
-
-const updateRolSelect = async () => {
-
-    const data = await fetch(`/api/rol`, {
-        method: 'GET'
-    });
-
-    const datajson = await data.json();
-
-
-
-    const selectrol = document.getElementById('select_rol');
-
-    if (datajson.length === 0) {
-
-        return `<option value="">NO HAY </option>`;
-    }
-    ;
-
-    let contentUpdated = `<option value=""> SELECCIONE ROL</option>`;
-
-    for (let i = 0; i < datajson.length; i++) {
-
-        contentUpdated += `<option value="${datajson[i].id}"> ${datajson[i].nombre}</option>`;
-
-    }
-    ;
-
-    selectrol.innerHTML = contentUpdated;
-
-};
-
-
-

@@ -1,36 +1,27 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package routes.api;
 
-import controller.TipoVehiculoServiceImpl;
+import controller.ConductorEvaluacionServiceImpl;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import model.TipoVehiculo;
+import model.ConductorEvaluacion;
 import model.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import util.BCrypt;
 import util.http;
 
-/**
- *
- * @author Camilo
- */
-@WebServlet(name = "ApiTipoVehiculo", urlPatterns = {"/api/tipovehiculo"})
-public class ApiTipoVehiculo extends HttpServlet {
+@WebServlet(name = "ApiConductorEvaluacion", urlPatterns = {"/api/conductor/evaluacion"})
+public class ApiConductorEvaluacion extends HttpServlet {
 
-    TipoVehiculoServiceImpl service = new TipoVehiculoServiceImpl();
+    ConductorEvaluacionServiceImpl service = new ConductorEvaluacionServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -38,8 +29,7 @@ public class ApiTipoVehiculo extends HttpServlet {
 
         PrintWriter out = response.getWriter();
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
         User userLogin = (User) request.getSession().getAttribute("usuario");
         if (userLogin == null) {
 
@@ -50,25 +40,28 @@ public class ApiTipoVehiculo extends HttpServlet {
             out.println(res);
             return;
         }
-        ArrayList<TipoVehiculo> listTipoVehiculo = service.getTipoVehiculos();
+        ArrayList<ConductorEvaluacion> conductorlist = service.getEvaluacionConductores();
 
-        System.out.println(listTipoVehiculo);
+        ArrayList<JSONObject> resConductorVehiculo = new ArrayList();
 
-        ArrayList<JSONObject> resTipoVehiculo = new ArrayList();
-
-        for (int i = 0; i < listTipoVehiculo.size(); i++) {
+        for (int i = 0; i < conductorlist.size(); i++) {
             JSONObject obj = new JSONObject();
-            TipoVehiculo user = listTipoVehiculo.get(i);
+            ConductorEvaluacion evaluacion = conductorlist.get(i);
+            obj.put("evaluacion_id", evaluacion.getEvaluacion_id());
+            obj.put("conductor_id", evaluacion.getConductor_id());
+            obj.put("conductor_nombre", evaluacion.getConductor_nombre());
+            obj.put("conductor_apellido", evaluacion.getConductor_apellido());
+            obj.put("evaluador_id", evaluacion.getEvaluador_id());
+            obj.put("evaluador_nombre", evaluacion.getEvaluador_nombre());
+            obj.put("evaluador_apellido", evaluacion.getEvaluador_apellido());
+            obj.put("notaExamTeo", evaluacion.getEvaluacion_notaExamTeo());
+            obj.put("notaExamPrac", evaluacion.getEvaluacion_notaExamPrac());
 
-            obj.put("id", user.getId());
-            obj.put("codigo", user.getCod());
-            obj.put("detalle", user.getDetalle());
-
-            resTipoVehiculo.add(obj);
+            resConductorVehiculo.add(obj);
 
         }
 
-        out.println(resTipoVehiculo);
+        out.println(resConductorVehiculo);
 
     }
 
@@ -78,6 +71,7 @@ public class ApiTipoVehiculo extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+
         PrintWriter out = response.getWriter();
         User userLogin = (User) request.getSession().getAttribute("usuario");
         if (userLogin == null) {
@@ -90,18 +84,18 @@ public class ApiTipoVehiculo extends HttpServlet {
             return;
         }
         try {
-            JSONObject res = new JSONObject();
-
             JSONObject payload = http.getBody(request);
 
-            if (payload == null) {
-                throw new Error("No hay datos");
-            }
+            String conductor = (String) payload.get("conductor");
+            String evaluador = (String) payload.get("evaluador");
+            Double notaExamTeo = ((Long) payload.get("notaExamTeo")).doubleValue();
+            Double notaExamPrac = ((Long) payload.get("notaExamPrac")).doubleValue();
 
-            String codigo = (String) payload.get("codigo");
-            String detalle = (String) payload.get("detalle");
+            System.out.println(conductor + evaluador + notaExamTeo + notaExamPrac);
 
-            boolean rs = service.createTipoVehiculo(codigo, detalle);
+            boolean rs = service.createEvaluacionConductor(conductor, evaluador, notaExamTeo, notaExamPrac);
+
+            JSONObject res = new JSONObject();
 
             if (rs) {
 
@@ -112,18 +106,12 @@ public class ApiTipoVehiculo extends HttpServlet {
                 res.put("error", true);
                 out.println(res);
             }
-//            }
-        } catch (Error ex) {
-
-            JSONObject res = new JSONObject();
-            res.put("error", true);
-            res.put("mensaje", ex.getMessage());
-            out.println(res);
         } catch (ParseException ex) {
-            Logger.getLogger(ApiTipoVehiculo.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ApiConductorEvaluacion.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
+//////
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
@@ -145,7 +133,7 @@ public class ApiTipoVehiculo extends HttpServlet {
             out.println(res);
             return;
         }
-        boolean res = service.deleteTipoVehiculo(id);
+        boolean res = service.deleteEvaluacionConductor(id);
 
         JSONObject msj = new JSONObject();
 
@@ -158,6 +146,7 @@ public class ApiTipoVehiculo extends HttpServlet {
         }
 
     }
+//
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
@@ -178,15 +167,13 @@ public class ApiTipoVehiculo extends HttpServlet {
         try {
             JSONObject payload = http.getBody(request);
 
-            if (payload == null) {
-                throw new Error("No hay datos");
-            }
-
+            String conductor = (String) payload.get("conductor");
+            String evaluador = (String) payload.get("evaluador");
+            Double notaExamTeo = ((Long) payload.get("notaExamTeo")).doubleValue();
+            Double notaExamPrac = ((Long) payload.get("notaExamPrac")).doubleValue();
             String id = (String) payload.get("id");
-            String codigo = (String) payload.get("codigo");
-            String detalle = (String) payload.get("detalle");
 
-            boolean res = service.updateTipoVehiculo(id, codigo, detalle);
+            boolean res = service.updateEvaluacionConductor(id, conductor, evaluador, notaExamTeo, notaExamPrac);
 
             JSONObject msj = new JSONObject();
 
@@ -199,14 +186,7 @@ public class ApiTipoVehiculo extends HttpServlet {
             }
 
         } catch (ParseException ex) {
-            Logger.getLogger(ApiUser.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Error ex) {
-
-            JSONObject res = new JSONObject();
-            res.put("error", true);
-            res.put("mensaje", ex.getMessage());
-            out.println(res);
+            Logger.getLogger(ApiConductorVehiculo.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 }

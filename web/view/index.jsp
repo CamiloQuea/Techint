@@ -16,13 +16,15 @@
 <%@include  file="components/contentheader.jsp"  %>
 
 
-<div class="mb-auto h-100">
+<div class="d-block mb-auto">
 
-    INDEX
-
+    
 </div>
+
+
 
 
 <%@include  file="components/contentfooter.jsp"  %>
 
 <%@include  file="components/foot.jsp"  %>
+

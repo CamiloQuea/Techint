@@ -13,11 +13,8 @@ const modalTab = new bootstrap.Modal(document.getElementById('modalTab'), {
 window.onload = async () => {
 
     await updateTable();
-    await updateEmpresaSelect();
-    await updatePaisSelect();
-    await updateTipoDocumentoSelect();
-    await updateGrupoSanguineoSelect();
-
+    await updateConductorSelect();
+    await updateVehiculoSelect();
 };
 
 on(document, 'keyup', '#filtro', e => {
@@ -108,14 +105,9 @@ on(document, 'submit', '#modalTabForm', async e => {
 
         const data = {
 
-            empresa_id: selectModal['empresa_id'].value,
-            grupoSanguineo_id: selectModal['grupoSanguineo_id'].value,
-            tipoDocumentoIdentidad_id: selectModal['tipoDocumento_id'].value,
-            pais_id: selectModal['pais_id'].value,
-            documento: inputsModal['documento'].value,
-            nombre: inputsModal['nombre'].value,
-            apellido: inputsModal['apellido'].value,
-            activo: inputsModal['checkBox_active'].checked
+            conductor: selectModal['conductor_id'].value,
+            vehiculo: selectModal['vehiculo_id'].value
+
 
         };
 
@@ -174,11 +166,12 @@ async function deleteBtn(btn) {
 
     const elemento = fila.children;
 
-    const user_id = elemento[0].innerHTML;
+    const conductor_id = elemento[0].innerHTML;
+    const vehiculo_id = elemento[3].innerHTML;
 
     if (confirm('ESTA SEGURO DE ELIMINAR?')) {
 
-        await deleteItem(user_id);
+        await deleteItem(conductor_id,vehiculo_id);
 
     }
 
@@ -203,7 +196,7 @@ async function deleteBtn(btn) {
 
 const createItem = async (body) => {
 
-    const data = await fetch('/api/conductor', {
+    const data = await fetch('/api/conductor/vehiculo', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -233,9 +226,9 @@ const updateItem = async (body) => {
 
 };
 
-const deleteItem = async (id) => {
+const deleteItem = async (conductor, vehiculo) => {
 
-    const data = await fetch(`/api/conductor?id=${id}`, {
+    const data = await fetch(`/api/conductor/vehiculo?conductor=${conductor}&vehiculo=${vehiculo}`, {
         method: 'DELETE'
     });
 
@@ -246,9 +239,8 @@ const deleteItem = async (id) => {
 
 const updateTable = async () => {
 
-    const data = await fetch(`/api/conductor`, {
-        method: 'GET',
-        credentials: 'include'
+    const data = await fetch(`/api/conductor/vehiculo`, {
+        method: 'GET'
     });
 
     const datajson = await data.json();
@@ -269,19 +261,14 @@ const updateTable = async () => {
     for (let i = 0; i < datajson.length; i++) {
 
         contentUpdated += `<tr class="align-middle">
-                                <td>${datajson[i].id}</td>
-                                <td>${datajson[i].nombre}</td>
-                                <td>${datajson[i].apellido}</td>
-                                <td>${datajson[i].empresa_id}</td>
-                                <td>${datajson[i].empresa_name}</td>
-                                <td>${datajson[i].grupoSanguineo_id}</td>
-                                <td>${datajson[i].grupoSanguineo_name}</td>
-                                <td>${datajson[i].tipoDocumentoIdentidad_id}</td>
-                                <td>${datajson[i].tipoDocumentoIdentidad_name}</td>
-                                <td>${datajson[i].documento}</td>
-                                <td>${datajson[i].pais_id}</td>
-                                <td>${datajson[i].pais_name}</td>
-                                <td>${datajson[i].activo}</td>
+                                <td>${datajson[i].conductor_id}</td>
+                                <td>${datajson[i].conductor_nombre}</td>
+                                <td>${datajson[i].conductor_apellido}</td>
+                                <td>${datajson[i].vehiculo_id}</td>
+                                <td>${datajson[i].vehiculo_placa}</td>
+                                <td>${datajson[i].tipoVehiculo_id}</td>
+                                <td>${datajson[i].tipoVehiculo_nombre}</td>
+                                
          
                                 <td>
         <div class="d-flex justify-content-evenly">
@@ -289,10 +276,7 @@ const updateTable = async () => {
                                     <button class=" btn btn-link p-0" onClick="deleteBtn(this)">
                                         <i class="fas fa-trash text-danger"></i> 
                                     </button>  
-                                    <button class=" btn btn-link p-0" onClick="editBtn(this)">
-                                        <i class="fas fa-pen text-warning"></i>
-                                    </button>
-        </div>
+                                 
                                 </td>
                             </tr>`;
 
@@ -306,14 +290,8 @@ const updateTable = async () => {
 const verifyCreate = () => {
 
     if (
-            selectModal['empresa_id'].value,
-            selectModal['grupoSanguineo_id'].value,
-            selectModal['tipoDocumento_id'].value,
-            selectModal['pais_id'].value,
-            inputsModal['documento'].value,
-            inputsModal['nombre'].value,
-            inputsModal['apellido'].value,
-            inputsModal['checkBox_active'].checked
+            selectModal['conductor_id'].value,
+            selectModal['vehiculo_id'].value
             ) {
 
         return false;
@@ -353,9 +331,9 @@ const verifyUpdate = () => {
 //ROL
 
 
-const updateEmpresaSelect = async () => {
+const updateConductorSelect = async () => {
 
-    const data = await fetch(`/api/empresa`, {
+    const data = await fetch(`/api/conductor`, {
         method: 'GET'
     });
 
@@ -363,19 +341,19 @@ const updateEmpresaSelect = async () => {
 
 
 
-    const selectrol = document.getElementById('select_empresa');
+    const selectrol = document.getElementById('select_conductor');
 
     if (datajson.length === 0) {
 
-        return `<option value="">NO HAY </option>`;
+        return `<option value="">NO HAY CONDUCTORES</option>`;
     }
     ;
 
-    let contentUpdated = `<option value=""> SELECCIONE EMPRESA</option>`;
+    let contentUpdated = `<option value=""> SELECCIONE CONDUCTOR</option>`;
 
     for (let i = 0; i < datajson.length; i++) {
 
-        contentUpdated += `<option value="${datajson[i].id}"> ${datajson[i].nombre}</option>`;
+        contentUpdated += `<option value="${datajson[i].id}"> ${datajson[i].nombre} ${datajson[i].apellido}</option>`;
 
     }
     ;
@@ -384,9 +362,9 @@ const updateEmpresaSelect = async () => {
 
 };
 
-const updateGrupoSanguineoSelect = async () => {
+const updateVehiculoSelect = async () => {
 
-    const data = await fetch(`/api/gruposanguineo`, {
+    const data = await fetch(`/api/vehiculo`, {
         method: 'GET'
     });
 
@@ -394,19 +372,19 @@ const updateGrupoSanguineoSelect = async () => {
 
 
 
-    const selectrol = document.getElementById('select_grupoSanguineo');
+    const selectrol = document.getElementById('select_vehiculo');
 
     if (datajson.length === 0) {
 
-        return `<option value="">NO HAY </option>`;
+        return `<option value="">NO HAY VEHICULOS</option>`;
     }
     ;
 
-    let contentUpdated = `<option value=""> SELECCIONE GRUPO SANGUINEO</option>`;
+    let contentUpdated = `<option value=""> SELECCIONE VEHICULO</option>`;
 
     for (let i = 0; i < datajson.length; i++) {
 
-        contentUpdated += `<option value="${datajson[i].id}"> ${datajson[i].nombre}</option>`;
+        contentUpdated += `<option value="${datajson[i].id}"> ${datajson[i].detalle}</option>`;
 
     }
     ;
@@ -414,68 +392,4 @@ const updateGrupoSanguineoSelect = async () => {
     selectrol.innerHTML = contentUpdated;
 
 };
-
-const updateTipoDocumentoSelect = async () => {
-
-    const data = await fetch(`/api/tipodocumentoidentidad`, {
-        method: 'GET'
-    });
-
-    const datajson = await data.json();
-
-
-
-    const selectrol = document.getElementById('select_tipoDocumento');
-
-    if (datajson.length === 0) {
-
-        return `<option value="">NO HAY </option>`;
-    }
-    ;
-
-    let contentUpdated = `<option value=""> SELECCIONE TIPO DE DOCUMENTO</option>`;
-
-    for (let i = 0; i < datajson.length; i++) {
-
-        contentUpdated += `<option value="${datajson[i].id}"> ${datajson[i].nombre}</option>`;
-
-    }
-    ;
-
-    selectrol.innerHTML = contentUpdated;
-
-};
-
-const updatePaisSelect = async () => {
-
-    const data = await fetch(`/api/pais`, {
-        method: 'GET'
-    });
-
-    const datajson = await data.json();
-
-
-
-    const selectrol = document.getElementById('select_pais');
-
-    if (datajson.length === 0) {
-
-        return `<option value="">NO HAY </option>`;
-    }
-    ;
-
-    let contentUpdated = `<option value=""> SELECCIONE PAIS</option>`;
-
-    for (let i = 0; i < datajson.length; i++) {
-
-        contentUpdated += `<option value="${datajson[i].id}"> ${datajson[i].nombre}</option>`;
-
-    }
-    ;
-
-    selectrol.innerHTML = contentUpdated;
-
-};
-
-
 

@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.User;
 import model.Vehiculo;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -39,7 +40,16 @@ public class ApiVehiculo extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         ArrayList<Vehiculo> listVehiculo = service.getVehiculos();
 
         ArrayList<JSONObject> resTipoVehiculo = new ArrayList();
@@ -67,6 +77,16 @@ public class ApiVehiculo extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
+
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject res = new JSONObject();
 
@@ -78,8 +98,6 @@ public class ApiVehiculo extends HttpServlet {
 
             String tipo_vehiculo = (String) payload.get("tipo_vehiculo");
             String placa = (String) payload.get("placa");
-
-           
 
             boolean rs = service.createVehiculo(tipo_vehiculo, placa);
 
@@ -104,8 +122,7 @@ public class ApiVehiculo extends HttpServlet {
         }
 
     }
-    
-    
+
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -116,7 +133,16 @@ public class ApiVehiculo extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         boolean res = service.deleteVehiculo(id);
 
         JSONObject msj = new JSONObject();
@@ -137,7 +163,16 @@ public class ApiVehiculo extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload = http.getBody(request);
 
@@ -148,7 +183,6 @@ public class ApiVehiculo extends HttpServlet {
             String id = (String) payload.get("id");
             String tipo_vehiculo = (String) payload.get("tipo_vehiculo");
             String placa = (String) payload.get("placa");
-            
 
             boolean res = service.updateVehiculo(id, tipo_vehiculo, placa);
 

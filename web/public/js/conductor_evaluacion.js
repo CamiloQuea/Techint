@@ -13,8 +13,8 @@ const modalTab = new bootstrap.Modal(document.getElementById('modalTab'), {
 window.onload = async () => {
 
     await updateTable();
-    await updateRolSelect();
-
+    await updateConductorSelect();
+    await updateEvaluadorSelect();
 };
 
 on(document, 'keyup', '#filtro', e => {
@@ -27,31 +27,31 @@ const editBtn = async(btn) => {
 
     modalTabForm.reset();
 
-    modaltitle.innerHTML = 'MODIFICAR USUARIO';
+    modaltitle.innerHTML = 'MODIFICAR EVALUACION';
 
     fila = btn.parentNode.parentNode.parentNode;
 
     const elemento = fila.children;
 
-    const user_id = elemento[0].innerHTML;
+    const id = elemento[0].innerHTML;
 
-    const nombre = elemento[1].innerHTML;
+    const conductor_id = elemento[1].innerHTML;
 
-    const apellido = elemento[2].innerHTML;
+    const evaluador_id = elemento[4].innerHTML;
 
-    const correo = elemento[3].innerHTML;
+    const notaExamTeo = elemento[7].innerHTML;
 
-    const rol_id = elemento[4].innerHTML;
+    const notaExamPrac = elemento[8].innerHTML;
 
-    inputsModal['user_id'].value = user_id;
+    inputsModal['id'].value = id;
 
-    inputsModal['nombre'].value = nombre;
+    selectModal['conductor_id'].value = conductor_id;
 
-    inputsModal['apellido'].value = apellido;
+    selectModal['evaluador_id'].value = evaluador_id;
 
-    inputsModal['correo'].value = correo;
+    inputsModal['notaExamTeo'].value = notaExamTeo;
 
-    selectModal['rol_id'].value = rol_id;
+    inputsModal['notaExamPrac'].value = notaExamPrac;
 
     inputsModal['tipo'].value = 'actualizar';
 
@@ -82,17 +82,21 @@ on(document, 'submit', '#modalTabForm', async e => {
 
     if (tipo === 'crear') {
 
+
         const data = {
 
-            nombre: inputsModal['nombre'].value,
-            apellido: inputsModal['apellido'].value,
-            contra: inputsModal['contra'].value,
-            correo: inputsModal['correo'].value,
-            rol_id: selectModal['rol_id'].value
+            conductor: selectModal['conductor_id'].value,
+            evaluador: selectModal['evaluador_id'].value,
+            notaExamTeo: parseFloat(inputsModal['notaExamTeo'].value),
+            notaExamPrac: parseFloat(inputsModal['notaExamPrac'].value)
+
 
         };
 
-        if (verifyUpdate()) {
+        console.log(data);
+
+
+        if (verifyCreate()) {
 
             return;
 
@@ -110,12 +114,11 @@ on(document, 'submit', '#modalTabForm', async e => {
 
         const data = {
 
-            id: inputsModal['user_id'].value,
-            nombre: inputsModal['nombre'].value,
-            apellido: inputsModal['apellido'].value,
-            contra: inputsModal['contra'].value,
-            correo: inputsModal['correo'].value,
-            rol_id: selectModal['rol_id'].value
+            id: inputsModal['id'].value,
+            conductor: selectModal['conductor_id'].value,
+            evaluador: selectModal['evaluador_id'].value,
+            notaExamTeo: parseFloat(inputsModal['notaExamTeo'].value),
+            notaExamPrac: parseFloat(inputsModal['notaExamPrac'].value)
 
         };
 
@@ -143,11 +146,12 @@ async function deleteBtn(btn) {
 
     const elemento = fila.children;
 
-    const user_id = elemento[0].innerHTML;
+    const conductor_id = elemento[0].innerHTML;
+
 
     if (confirm('ESTA SEGURO DE ELIMINAR?')) {
 
-        await deleteItem(user_id);
+        await deleteItem(conductor_id);
 
     }
 
@@ -172,7 +176,7 @@ async function deleteBtn(btn) {
 
 const createItem = async (body) => {
 
-    const data = await fetch('/api/user', {
+    const data = await fetch('/api/conductor/evaluacion', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -187,7 +191,7 @@ const createItem = async (body) => {
 
 const updateItem = async (body) => {
 
-    const data = await fetch('/api/user', {
+    const data = await fetch('/api/conductor/evaluacion', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -204,7 +208,7 @@ const updateItem = async (body) => {
 
 const deleteItem = async (id) => {
 
-    const data = await fetch(`/api/user?id=${id}`, {
+    const data = await fetch(`/api/conductor/evaluacion?id=${id}`, {
         method: 'DELETE'
     });
 
@@ -215,14 +219,12 @@ const deleteItem = async (id) => {
 
 const updateTable = async () => {
 
-    const data = await fetch(`/api/user`, {
-        method: 'GET',
-        credentials: 'include'
+    const data = await fetch(`/api/conductor/evaluacion`, {
+        method: 'GET'
     });
 
     const datajson = await data.json();
 
-    console.log('YOOO', datajson)
 
     const tablaFilas = document.querySelector('#tablaFilas');
 
@@ -239,12 +241,17 @@ const updateTable = async () => {
     for (let i = 0; i < datajson.length; i++) {
 
         contentUpdated += `<tr class="align-middle">
-                                <td>${datajson[i].id}</td>
-                                <td>${datajson[i].nombre}</td>
-                                <td>${datajson[i].apellido}</td>
-                                <td>${datajson[i].correo}</td>
-                                <td>${datajson[i].rol_id}</td>
-                                <td>${datajson[i].rol}</td>
+                                <td>${datajson[i].evaluacion_id}</td>
+                                <td>${datajson[i].conductor_id}</td>
+                                <td>${datajson[i].conductor_nombre}</td>
+                                <td>${datajson[i].conductor_apellido}</td>
+                                <td>${datajson[i].evaluador_id}</td>
+                                <td>${datajson[i].evaluador_nombre}</td>
+                                <td>${datajson[i].evaluador_apellido}</td>
+                                <td>${datajson[i].notaExamTeo}</td>
+                                <td>${datajson[i].notaExamPrac}</td>
+                                
+         
                                 <td>
         <div class="d-flex justify-content-evenly">
         
@@ -254,7 +261,7 @@ const updateTable = async () => {
                                     <button class=" btn btn-link p-0" onClick="editBtn(this)">
                                         <i class="fas fa-pen text-warning"></i>
                                     </button>
-        </div>
+                                 
                                 </td>
                             </tr>`;
 
@@ -268,11 +275,10 @@ const updateTable = async () => {
 const verifyCreate = () => {
 
     if (
-//            selectModal['rol_id'].value !== "" &&
-            inputsModal['nombre'].value !== "" &&
-            inputsModal['apellido'].value !== "" &&
-            inputsModal['contra'].value !== "" &&
-            inputsModal['correo'].value !== ""
+            selectModal['conductor_id'].value,
+            selectModal['evaluador_id'].value,
+            inputsModal['notaExamTeo'].value,
+            inputsModal['notaExamPrac'].value
             ) {
 
         return false;
@@ -288,11 +294,11 @@ const verifyCreate = () => {
 const verifyUpdate = () => {
 
     if (
-            selectModal['rol_id'].value !== "" &&
-            inputsModal['nombre'].value !== "" &&
-            inputsModal['apellido'].value !== "" &&
-//            inputsModal['contra'].value !== "" &&
-            inputsModal['correo'].value !== ""
+            inputsModal['id'].value,
+            selectModal['conductor_id'].value,
+            selectModal['evaluador_id'].value,
+            inputsModal['notaExamTeo'].value,
+            inputsModal['notaExamPrac'].value
             ) {
 
         return false;
@@ -309,9 +315,9 @@ const verifyUpdate = () => {
 //ROL
 
 
-const updateRolSelect = async () => {
+const updateConductorSelect = async () => {
 
-    const data = await fetch(`/api/rol`, {
+    const data = await fetch(`/api/conductor`, {
         method: 'GET'
     });
 
@@ -319,19 +325,19 @@ const updateRolSelect = async () => {
 
 
 
-    const selectrol = document.getElementById('select_rol');
+    const selectrol = document.getElementById('select_conductor');
 
     if (datajson.length === 0) {
 
-        return `<option value="">NO HAY </option>`;
+        return `<option value="">NO HAY CONDUCTORES</option>`;
     }
     ;
 
-    let contentUpdated = `<option value=""> SELECCIONE ROL</option>`;
+    let contentUpdated = `<option value=""> SELECCIONE CONDUCTOR</option>`;
 
     for (let i = 0; i < datajson.length; i++) {
 
-        contentUpdated += `<option value="${datajson[i].id}"> ${datajson[i].nombre}</option>`;
+        contentUpdated += `<option value="${datajson[i].id}"> ${datajson[i].nombre} ${datajson[i].apellido}</option>`;
 
     }
     ;
@@ -340,5 +346,34 @@ const updateRolSelect = async () => {
 
 };
 
+const updateEvaluadorSelect = async () => {
 
+    const data = await fetch(`/api/evaluador`, {
+        method: 'GET'
+    });
+
+    const datajson = await data.json();
+
+
+
+    const selectrol = document.getElementById('select_evaluador');
+
+    if (datajson.length === 0) {
+
+        return `<option value="">NO HAY EVALUADORES</option>`;
+    }
+    ;
+
+    let contentUpdated = `<option value=""> SELECCIONE EVALUADOR</option>`;
+
+    for (let i = 0; i < datajson.length; i++) {
+
+        contentUpdated += `<option value="${datajson[i].id}"> ${datajson[i].nombre} ${datajson[i].apellido}</option>`;
+
+    }
+    ;
+
+    selectrol.innerHTML = contentUpdated;
+
+};
 

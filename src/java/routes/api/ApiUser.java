@@ -1,6 +1,5 @@
 package routes.api;
 
-
 import controller.UserServiceImpl;
 import ServicesInterfaces.UserService;
 import java.io.IOException;
@@ -31,19 +30,24 @@ public class ApiUser extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         response.setContentType("application/json;charset=UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         ArrayList<User> userlist = service.getUsers();
-        
-        
 
         ArrayList<JSONObject> resUser = new ArrayList();
 
-        
-        
         for (int i = 0; i < userlist.size(); i++) {
             JSONObject obj = new JSONObject();
             User user = userlist.get(i);
-            
+
             obj.put("id", user.getId());
             obj.put("nombre", user.getNombre());
             obj.put("apellido", user.getApellido());
@@ -65,14 +69,21 @@ public class ApiUser extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
-        
+
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
+
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload = http.getBody(request);
 
-            
-            
             String nombre = (String) payload.get("nombre");
             String apellido = (String) payload.get("apellido");
             String correo = (String) payload.get("correo");
@@ -108,11 +119,18 @@ public class ApiUser extends HttpServlet {
 
         String id = request.getParameter("id");
 
-        
-
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         boolean res = service.deleteUser(id);
 
         JSONObject msj = new JSONObject();
@@ -133,10 +151,19 @@ public class ApiUser extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        User userLogin = (User) request.getSession().getAttribute("usuario");
+        if (userLogin == null) {
 
+            JSONObject res = new JSONObject();
+
+            res.put("error", true);
+            response.setStatus(401);
+            out.println(res);
+            return;
+        }
         try {
             JSONObject payload = http.getBody(request);
-            
+
             String user_id = (String) payload.get("id");
             String nombre = (String) payload.get("nombre");
             String apellido = (String) payload.get("apellido");
@@ -144,8 +171,6 @@ public class ApiUser extends HttpServlet {
             String contraseña = (String) payload.get("contra");
             String rol_id = (String) payload.get("rol_id");
 
-            
-            
             if (!contraseña.isEmpty()) {
                 contraseña = BCrypt.hashpw(contraseña, BCrypt.gensalt(12));
             }
